@@ -1,7 +1,7 @@
 var require = {
     paths: {
         'THREE': '../bower_components/three.js/build/three.min',
-        'ROT': '../libs/rot/rot.min',
+        'ROT': '../libs/rot.min',
         'Chance': '../bower_components/chance/dist/chance.min',
         'Phaser': '../libs/phaser/phaser.min',
         'LowRez': '../libs/phaser/low-rez',

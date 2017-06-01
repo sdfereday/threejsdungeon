@@ -1,4 +1,4 @@
-require(['THREE'], function (THREE) {
+require(['THREE', 'ROT'], function (THREE, ROT) {
 
     'use strict';
 
@@ -59,7 +59,7 @@ require(['THREE'], function (THREE) {
 
     // Add the camera
     scene.add(camera);
-   
+
     // var raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
 
     // Start the renderer
@@ -69,25 +69,127 @@ require(['THREE'], function (THREE) {
     container.appendChild(renderer.domElement);
 
     // ----
-    // Game Map
-    let map = [
-        [1, 0, 2],
-        [1, 0, 2],
-        [1, 3, 2]
-    ];
+    // let map = [];
+
+    // let mapData = [];
+
+    // // Game Map
+    // ROT.RNG.setSeed(1234);
+    // var m = new ROT.Map.Digger();
+    // var display = new ROT.Display({fontSize:8});
+    // m.create(display.DEBUG);
+
+    // var rooms = m.getRooms();
+    // var corridors = m.getCorridors();
+
+    // var thing = rooms.concat(corridors);
+
+    // var drawDoor = function(x, y) {
+    //     display.draw(x, y, "", "", "red");
+    // };
+
+    // for (let col = 0; col < m._width; col++) {
+
+    //     map.push([]);
+
+    //     for (let row = 0; row < m._height; row++) {
+
+    //         map[col][row] = 0;
+
+    //     }
+
+    // }
+
+    // thing.forEach(function(t){
+
+    //     if(typeof t.getTop === 'function') {
+
+    //         let x = t.getLeft();
+    //         let y = t.getTop();
+
+    //         let right = t.getRight();
+    //         let bottom = t.getBottom();
+
+    //         map[x][y] = 1;
+
+    //         for(var i = 0; i < right; i++) {
+    //             map[i][y] = 1;
+    //         }
+
+    //         for(var j = 0; j < bottom; j++) {
+    //             map[x][j] = 1;
+    //         }
+
+    //     }
+
+    // });
+
+    // console.log(map);
+
+    // for (var i=0; i<rooms.length; i++) {
+    //     var room = rooms[i];
+
+    //     // SHOW("Room #%s: [%s, %s] => [%s, %s]".format(
+    //     //     (i+1),
+    //     //     room.getLeft(), room.getTop(),
+    //     //     room.getRight(), room.getBottom()
+    //     // ));
+
+    //     //room.getDoors(drawDoor);
+    // }
+
+    function calculateTileIndex(above, below, left, right) {
+        var sum = 0;
+        if (above) sum += 1;
+        if (left) sum += 2;
+        if (below) sum += 4;
+        if (right) sum += 8;
+        return sum;
+    };
 
     let mapData = [];
 
+    let map = [
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+    ];
+
+    let map2 = [];
+
+    for (let i = 0; i < map.length; i++) {
+
+        map2.push([]);
+
+        for (let j = 0; j < map[i].length; j++) {
+
+            let n = calculateTileIndex(
+                j > 0 ? map[i][j - 1] : 1,
+                j < map.length - 1 ? map[i][j + 1] : 1,
+                i > 0 ? map[i - 1][j] : 1,
+                i < map[i].length - 1 ? map[i + 1][j] : 1
+            );
+
+            map2[i][j] = n;
+
+        }
+
+    }
+
+    console.log(JSON.stringify(map2));
+
     function generateMapSets() {
 
-        for (let col = 0; col < map.length; col++) {
+        for (let col = 0; col < map2.length; col++) {
 
-            for (let row = 0; row < map[col].length; row++) {
+            for (let row = 0; row < map2[col].length; row++) {
 
-                let current = map[col][row];
+                let current = map2[col][row];
 
                 switch (current) {
-                    case 1:
+                    case 14:
                         mapData.push({
                             col: col,
                             x: -48,
@@ -95,7 +197,7 @@ require(['THREE'], function (THREE) {
                             rotation: 90
                         });
                         break;
-                    case 2:
+                    case 11:
                         mapData.push({
                             col: col,
                             x: 48,
@@ -103,12 +205,20 @@ require(['THREE'], function (THREE) {
                             rotation: -90
                         });
                         break;
-                    case 3:
+                    case 13:
                         mapData.push({
                             col: col,
                             x: 0,
                             z: -96,
                             rotation: 0
+                        });
+                        break;
+                    case 7:
+                        mapData.push({
+                            col: col,
+                            x: 0,
+                            z: -96,
+                            rotation: 180
                         });
                         break;
                 }
